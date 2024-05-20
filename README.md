@@ -23,7 +23,7 @@ install.packages(c("shiny", "tidyverse", "dplyr", "ggplot2", "caret", "randomFor
 Clone this repository to your local machine using:
 
 ```bash
-git clone <repository-url>
+git clone git@github.com:Yamaguya/ShinyShroom.git
 ```
 
 ## Running the App
@@ -58,9 +58,6 @@ The server function handles the reactive elements of the app, including renderin
 ## Usage
 Navigate through the tabs to explore different aspects of the model and dataset.
 Use the dropdown menu in the "Variable Importance" tab to switch between bar plots and dot plots.
-
-## Contributing
-If you would like to contribute to this project, please fork the repository and submit a pull request. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
