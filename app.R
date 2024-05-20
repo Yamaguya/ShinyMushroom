@@ -20,9 +20,13 @@ sum(is.na(mushroom_data))
 colnames(mushroom_data) <- make.names(colnames(mushroom_data))
 
 set.seed(123)  # For reproducibility
-trainIndex <- createDataPartition(mushroom_data$class, p = .8, 
+
+# Split data into training and testing sets
+trainIndex <- createDataPartition(mushroom_data$class, 
+                                  p = .8, 
                                   list = FALSE, 
                                   times = 1)
+
 mushroom_train <- mushroom_data[trainIndex,]
 mushroom_test <- mushroom_data[-trainIndex,]
 
@@ -57,8 +61,9 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       h3("Model Overview"),
-      verbatimTextOutput("model_summary"),
+      verbatimTextOutput("model_summary"), # Display the summary of the Random Forest model
       hr(),
+      # Dropdown to select the type of variable importance plot
       pickerInput(
         inputId = "importance_plot_type",
         label = "Variable Importance Plot Type:",
@@ -69,14 +74,17 @@ ui <- fluidPage(
     
     mainPanel(
       tabsetPanel(
+        # Tab to display confusion matrices
         tabPanel("Confusion Matrix",
                  h4("Initial Model Confusion Matrix"),
                  verbatimTextOutput("conf_matrix"),
                  h4("Tuned Model Confusion Matrix"),
                  verbatimTextOutput("tuned_conf_matrix")),
+        # Tab to display confusion matrices
         tabPanel("Variable Importance",
                  h4("Variable Importance"),
                  plotlyOutput("varImpPlot")),
+        # Tab to display the mushroom dataset
         tabPanel("Data",
                  h4("Mushroom Data"),
                  DTOutput("data_table"))
@@ -88,22 +96,27 @@ ui <- fluidPage(
 # Define server logic
 server <- function(input, output, session) {
   
+  # Output the summary of the Random Forest model
   output$model_summary <- renderPrint({
     print(rf_model)
   })
   
+  # Output the initial model confusion matrix
   output$conf_matrix <- renderPrint({
     print(conf_matrix)
   })
   
+  # Output the tuned model confusion matrix
   output$tuned_conf_matrix <- renderPrint({
     print(tuned_conf_matrix)
   })
   
+  # Output the variable importance plot using Plotly
   output$varImpPlot <- renderPlotly({
     var_importance_df <- as.data.frame(var_importance)
     var_importance_df$Variable <- rownames(var_importance_df)
     
+    # Create bar plot or dot plot based on user selection
     if (input$importance_plot_type == "bar") {
       p <- ggplot(var_importance_df, aes(x = reorder(Variable, MeanDecreaseGini), y = MeanDecreaseGini)) +
         geom_bar(stat = "identity", fill = "steelblue") +
@@ -117,7 +130,7 @@ server <- function(input, output, session) {
         labs(title = "Variable Importance (Dot Plot)", x = "Importance", y = "Variable")
     }
     
-    ggplotly(p)
+    ggplotly(p) # Convert ggplot to interactive Plotly plot
   })
 }
 
